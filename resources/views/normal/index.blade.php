@@ -7,7 +7,7 @@
         <div class="row">
             <div class="card">
                 <div class="card-header">
-                    <div class="" style="display: flex; justify-content: space-between;"><h3 >NORMAL</h3>
+                    <div class="" style="display: flex; justify-content: space-between;"><h3 >NORMAL GIFTING</h3>
                 </div>
                     
                 </div>
@@ -100,28 +100,28 @@
                                     </div>
                                     <div class="form-group">
                                         <label for="exampleInputBorderWidth2">Name Of Skin</label>
-                                        <input type="text" class="form-control form-control-border border-width-2" name="name_of_skin" id="name_of_skin" placeholder="ex: 100">
-                                        <span class="text-danger error-text" id="name_of_skin"></span>
+                                        <input type="text" class="form-control form-control-border border-width-2" name="name_of_skin" id="name_of_skin" placeholder="e.g: Viscount Alucard">
+                                        <span class="text-danger error-text" id="name_of_skin_error"></span>
                                     </div>
                                     <div class="form-group">
                                         <label for="exampleInputBorderWidth2">Type Of Skin</label>
-                                        <input type="text" class="form-control form-control-border border-width-2" name="type_of_skin" id="type_of_skin" placeholder="ex: 100">
-                                        <span class="text-danger error-text" id="type_of_skin"></span>
+                                        <input type="text" class="form-control form-control-border border-width-2" name="type_of_skin" id="type_of_skin" placeholder="e.g: Epic">
+                                        <span class="text-danger error-text" id="type_of_skin_error"></span>
                                     </div>
                                     
                                     <div class="form-group">
                                         <label for="exampleInputBorderWidth2">ML to Follow</label>
-                                        <input type="text" class="form-control form-control-border border-width-2" name="ml_to_follow" id="ml_to_follow" placeholder="e.g: jOhnD0e#123">
+                                        <input type="text" class="form-control form-control-border border-width-2" name="ml_to_follow" id="ml_to_follow" placeholder="ex: jOhnD0e#123">
                                         <span class="text-danger error-text " id="ml_to_follow_error"></span>
                                     </div>
                                     <div class="form-group">
                                         <label for="exampleInputBorderWidth2">Schedule</label>
-                                        <input type="text" class="form-control form-control-border border-width-2" name="schedule" id="schedule" placeholder="e.g: jOhnD0e#123">
+                                        <input type="text" class="form-control form-control-border border-width-2" name="schedule" id="schedule" placeholder="">
                                         <span class="text-danger error-text " id="schedule_error"></span>
                                     </div>
                                     <div class="form-group">
                                         <label for="exampleInputBorderWidth2">Payment</label>
-                                        <input type="text" class="form-control form-control-border border-width-2" name="payment" id="payment" placeholder="e.g: jOhnD0e#123">
+                                        <input type="text" class="form-control form-control-border border-width-2" name="payment" id="payment" placeholder="ex: 12345">
                                         <span class="text-danger error-text " id="payment_error"></span>
                                     </div>
                                     <div class="form-group">
@@ -180,7 +180,7 @@ $(function(){
         e.preventDefault();
 
         $.ajax({
-            url: "{{ route('normal.store') }}",
+            url: "/normal_gifting",
             dataType: "json",
             type: "POST",
             data: $form.serialize(),
@@ -190,7 +190,7 @@ $(function(){
                         $( '#name_error' ).html( data.error.name[0] );
                     }
                     if(data.error.name_of_skin){
-                        $( '#name_of_skin_error' ).html( data.error.order[0] );
+                        $( '#name_of_skin_error' ).html( data.error.name_of_skin[0] );
                     }
                     if(data.error.type_of_skin){
                         $( '#type_of_skin_error' ).html( data.error.type_of_skin[0] );

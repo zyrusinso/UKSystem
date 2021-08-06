@@ -7,7 +7,7 @@
         <div class="row">
             <div class="card">
                 <div class="card-header">
-                    <div class="" style="display: flex; justify-content: space-between;"><h3 >PILOT</h3>
+                    <div class="" style="display: flex; justify-content: space-between;"><h3 >PILOT SERVICE</h3>
                 </div>
                     
                 </div>

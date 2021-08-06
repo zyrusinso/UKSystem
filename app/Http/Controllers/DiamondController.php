@@ -26,12 +26,6 @@ class DiamondController extends Controller
     }
 
 
-    public function create()
-    {
-
-    }
-
-
     public function store(Request $request)
     {
         $validate = Validator::make($request->all(), [
@@ -96,13 +90,6 @@ class DiamondController extends Controller
         return view('diamond.show', compact('diamondData', 'diamondHistories'));
     }
 
-
-    public function edit($id)
-    {
-        //
-    }
-
-
     public function update(Request $request, $id)
     {
         $diamondData = Diamond::findorFail($id);
@@ -153,11 +140,5 @@ class DiamondController extends Controller
                 'success' => 'Successfuly Updated!'
             ]);
         }
-    }
-
-   
-    public function destroy($id)
-    {
-        //
     }
 }

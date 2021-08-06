@@ -56,14 +56,18 @@ Route::middleware('auth')->prefix('normal_gifting')->group(function() {
     Route::patch('/{id}', [App\Http\Controllers\NormalController::class, 'update'])->name('normal.update');
 
 });
-Route::middleware('auth')->prefix('skin')->group(function() {
+Route::middleware('auth')->prefix('pre_order_skin')->group(function() {
     Route::get('/', [App\Http\Controllers\SkinController::class, 'index'])->name('skin.index');
     Route::post('/', [App\Http\Controllers\SkinController::class, 'store'])->name('skin.store');
+    Route::get('/{id}', [App\Http\Controllers\SkinController::class, 'show'])->name('skin.show');
+    Route::patch('/{id}', [App\Http\Controllers\SkinController::class, 'update'])->name('skin.update');
 
 });
 Route::middleware('auth')->prefix('pre_order_diamond')->group(function() {
     Route::get('/', [App\Http\Controllers\OrderDiamondController::class, 'index'])->name('order_diamond.index');
     Route::post('/', [App\Http\Controllers\OrderDiamondController::class, 'store'])->name('order_diamond.store');
+    Route::get('/{id}', [App\Http\Controllers\OrderDiamondController::class, 'show'])->name('order_diamond.show');
+    Route::patch('/{id}', [App\Http\Controllers\OrderDiamondController::class, 'update'])->name('order_diamond.update');
 
 });
 Route::middleware('auth')->prefix('pre_order_starlight')->group(function() {

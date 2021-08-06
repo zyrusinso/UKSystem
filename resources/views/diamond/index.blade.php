@@ -151,12 +151,7 @@ $(function(){
       "autoWidth": true,
       "responsive": false,
     });
-    // 
-    // $('#dataInfo').on('click', function(){
-    //     // window.location.href = "/reseller";
-    //     var dataId = $(this).attr("data-id");
-        
-    // });
+
     
     //Order Request
     $('#orderForm').on('submit', function(e) {
@@ -205,9 +200,8 @@ $(function(){
                         'Order Request Successfuly Added',
                         'success'
                     ).then(function() {
-                        window.location = "/diamond";
+                        window.location = window.location.pathname;
                     });
-                    document.getElementById("contactUsForm").reset(); 
                 }
             },
         }); 
