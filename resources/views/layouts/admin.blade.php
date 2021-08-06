@@ -28,6 +28,7 @@
       flex: 1;      
 
     }
+
   </style>
 </head>
 <body class="hold-transition sidebar-mini">
@@ -44,7 +45,7 @@
                 <div>
                       <form action="{{ Request::url() }}" method="GET">
                       <div class="input-group" style="width: 255%;">
-                        <input class="form-control form-control-sidebar" name="term" id="term" type="search" placeholder="Search" aria-label="Search">
+                        <input id="myInput" class="form-control form-control-sidebar" type="search" placeholder="Search" aria-label="Search">
                         <div class="input-group-append">
                           <button class="btn btn-sidebar">
                             <i class="fas fa-search fa-fw"></i>
@@ -100,12 +101,21 @@
             
               <li>
                 <div class="info" >
-                      <a data-toggle="dropdown" aria-expanded="true" class="d-block nav-link" style=" margin-right: -5px;" disable>{{ auth()->user()->name }}</a>
+                      <a data-toggle="dropdown" aria-expanded="true" class="d-block nav-link" style=" margin-right: -5px; " disable><span style="
+                      color: <?php 
+                        if (Cache::has('user-is-online-' . auth()->user()->id)){
+                          echo "green";
+                        }else{
+                          echo "red";
+                        }
+                      ?>; 
+                      font-size: 15px;">
+                      •{{ auth()->user()->name }}</span></a>
                 </div> 
               </li>
               <li>
                   <div class="image">
-                        <a class="dropdown" data-toggle="dropdown" href="#"><img src="/admin-lte/dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image" style="width: 40px;"></a>
+                        <a class="dropdown" data-toggle="dropdown" href="#"><img src="/img/avatar.jpg" class="img-circle elevation-2" alt="User Image" style="width: 40px;"></a>
                         
                         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                         <a class="dropdown-item" href="#">Profile</a>
@@ -317,9 +327,24 @@
 <script src="/admin-lte/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
 <!-- AdminLTE App -->
 <script src="/admin-lte/dist/js/adminlte.min.js"></script>
+<script src="/admin-lte/plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="/admin-lte/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+<script src="/admin-lte/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+<script src="/admin-lte/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
 
 <!-- Ionic -->
 <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
 <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+<script>
+  $(document).ready(function(){
+    $("#myInput").on("keyup", function() {
+      var value = $(this).val().toLowerCase();
+      $("#myTable tr").filter(function() {
+        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+      });
+    });
+  });
+</script>
+</script>
 </body>
 </html>

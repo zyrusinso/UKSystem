@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Pilot extends Model
+class History extends Model
 {
     use HasFactory;
 
@@ -16,13 +16,24 @@ class Pilot extends Model
         'name',
         'initial_rank',
         'target_rank',
-        'status',
         'request',
         'handler',
         'tf',
         'payment',
+        'order',
+        'diamonds',
+        'coins',
+        'ml_id',
+        'ign',
+        'name_of_skin',
+        'type_of_skin',
+        'ml_to_follow',
+        'follow_status',
+        'schedule',
         'ref',
+        'status',
         'payment_method',
-        'profit'
-    ]; 
+        'profit',
+    ];
+
 }

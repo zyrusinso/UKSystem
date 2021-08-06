@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
 @section('content')
-
+<link rel="stylesheet" href="admin-lte/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
 <section class="content">
       <div class="container-fluid">
         <div class="row">
@@ -17,11 +17,11 @@
                     <table id="example2" class="table table-bordered table-hover table-sm" >
                     <?php 
                         if(!Auth::user()->isAdmin()){
-                        echo "<col><col><col><col><col><col style='visibility:collapse;'><col><col><col><col><col><col style='visibility:collapse;'>";
+                            echo "<col><col><col><col><col><col style='visibility:collapse;'><col><col><col><col><col><col style='visibility:collapse;'><col>";
                         }
                     ?>
                     <thead>
-                        <tr>
+                        <tr >
                             <th>Date</th>
                             <th>Request By</th>
                             <th>Name</th>
@@ -34,33 +34,38 @@
                             <th>Status</th>
                             <th>Payment Method</th>
                             <th>Profit</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
-                    <form action="" method="post" id="tableForm"></form>
-                    <tbody>
-                    @foreach ($resellers as $reseller)
+
+                    <tbody id="myTable">
+                    <?php foreach ($resellers as $reseller){?>
                         <tr>
-                        
                             <td>{{ $reseller->date }}</td>
                             <td>{{ $reseller->request_by }}</td>
                             <td>{{ $reseller->name }}</td>
-                            <td>{{ $reseller->order_value }}</td>
-                            <td>{{ $reseller->diamonds_value }}</td>
-                            <td>{{ $reseller->coins_value }}</td>
+                            <td>{{ $reseller->order }}</td>
+                            <td>{{ $reseller->diamonds }}</td>
+                            <td>{{ $reseller->coins }}</td>
                             <td>{{ $reseller->ml_id }}</td>
                             <td>{{ $reseller->ign }}</td>
                             <td>{{ $reseller->ref }}</td>
-                            <td>{{ $reseller->status }}</td>
+                            <td style="
+                            <?php 
+                                if($reseller->status == 'Pending'){echo 'background-color: #ff0000; color: white;';}
+                                if($reseller->status == 'Done'){echo 'background-color: green; color: white;';}
+                                if($reseller->status == 'Cancel'){echo 'background-color: black; color: white;';}
+                            ?>">
+                                {{ $reseller->status }}</td>
                             <td>{{ $reseller->payment_method }}</td>
-                            <td>{{ $reseller->profit_value }}</td>
+                            <td>{{ $reseller->profit }}</td>
+                            <td style="background-color: white"><a href="/reseller/<?= $reseller->id?>" class="btn btn-primary ">Edit</a></td>
                         </tr>
-                        @endforeach
-                    </form>
+                    <?php }?>
+
                     </tbody>
                     </table>
-                    
                 </div>
-                <!-- /.card-body -->
                 <div><button class="btn btn-success " 
                 style="height: 36px; width: 130px; float: right; margin: 0 10px 10px 0"
                 data-toggle="modal" id="addForm" data-target="#mediumModal">
@@ -79,36 +84,36 @@
                             </div>
                             <div class="modal-body" id="mediumBody">
                             <div class="form-group">
-                                <form  action="{{ route('diamond.store') }}" method="post"></form>
+                                <form  action="{{ route('reseller.store') }}" method="post" id="orderForm">
                                 @csrf
                                         <label for="exampleInputBorderWidth2">Name</label>
-                                        <input type="text" class="form-control form-control-border border-width-2" name="Name" id="Name"  placeholder="e.g: John Doe">
-                                        <span class="text-danger error-text Name_error"></span>
+                                        <input type="text" class="form-control form-control-border border-width-2" name="name" id="name"  placeholder="e.g: John Doe">
+                                        <span class="text-danger error-text" id="name_error"></span>
                                     </div>
                                     <div class="form-group">
                                         <label for="exampleInputBorderWidth2">Order</label>
                                         <input type="text" class="form-control form-control-border border-width-2" name="order" id="order" placeholder="ex: 100">
-                                        <span class="text-danger error-text order_error"></span>
+                                        <span class="text-danger error-text" id="order_error"></span>
                                     </div>
                                     <div class="form-group">
                                         <label for="exampleInputBorderWidth2">ML ID</label>
-                                        <input type="text" class="form-control form-control-border border-width-2" name="ml_id" id="ml_id" placeholder="ex: 123456789(1234)">
-                                        <span class="text-danger error-text ml_id_error"></span>
+                                        <input type="text" class="form-control form-control-border border-width-2" name="ml_id" id="ml_id"  placeholder="ex: 123456789(1234)">
+                                        <span class="text-danger error-text " id="ml_id_error"></span>
                                     </div>
                                     <div class="form-group">
                                         <label for="exampleInputBorderWidth2">IGN</label>
                                         <input type="text" class="form-control form-control-border border-width-2" name="ign" id="ign" placeholder="e.g: jOhnD0e#123">
-                                        <span class="text-danger error-text ign_error"></span>
+                                        <span class="text-danger error-text " id="ign_error"></span>
                                     </div>
                                     <div class="form-group">
                                         <label for="exampleInputBorderWidth2">Reference</label>
-                                        <input type="text" class="form-control form-control-border border-width-2" name="ref" id="ref" placeholder="ex: Filter Dupli">
-                                        <span class="text-danger error-text ref_error"></span>
+                                        <input type="text" class="form-control form-control-border border-width-2" name="ref" id="ref"  placeholder="ex: Filter Dupli">
+                                        <span class="text-danger error-text " id="ref_error"></span>
                                     </div>
                                     <div class="form-group">
                                         <label for="exampleInputBorderWidth2">Payment Method</label>
                                         <input type="text" class="form-control form-control-border border-width-2" name="payment_method" id="payment_method" placeholder="ex: Drop Down">
-                                        <span class="text-danger error-text payment_method_error"></span>
+                                        <span class="text-danger error-text " id="payment_method_error"></span>
                                     </div>
                                     <input type="submit" value="submit" id="addSubmitBTN" class="btn btn-lg btn-success py-0">
                                 </form>
@@ -117,52 +122,83 @@
                     </div>
                 </div>
                 
-                </div>
+            </div>
             <!-- /.card -->
         </div>
     </div>
 </section>
 
+<script src="/admin-lte/plugins/sweetalert2\sweetalert2.all.min.js"></script>
 
 <script>
-$('#addSubmitBTN').on('click', function(e) {
-    e.preventDefault();
-    var Name = $('#Name').val();
-    var order = $('#order').val();
-    var ml_id = $('#ml_id').val();
-    var ign = $('#ign').val();
-    var ref = $('#ref').val();
-    var payment_method = $('#payment_method').val();
-    $.ajax({
-        url: '/diamond',
-        method: "POST",
-        data: {
-            name: this.Name,
-            order: order,
-            ml_id: ml_id,
-            ign: ign,
-            ref: ref,
-            payment_method: payment_method,
-        },
-        processData: false,
-        dataType: 'json',
-        contentType: false,
-        beforeSend: function(){
-            $(document).find('span.error-text').text('');
-        },
-        success: function(data){
-            if(data.status == 0){
-                $.each(data.error, function(prefix, val){
-                    $('span.'+prefix+'_error').text(val[0]);
-                })
-            }else{
-                $('#main_form')[0].reset();
-                alert(data.message);
-            }
-        }
-    })
-})
- 
+
+$(function(){
+    //DataTables
+    $('#example2').DataTable({
+      "paging": true,
+      "lengthChange": false,
+      "searching": false,
+      "ordering": false,
+      "info": true,
+      "autoWidth": true,
+      "responsive": false,
+    });
     
+    
+    //Order Request
+    $('#orderForm').on('submit', function(e) {
+        var $form = $( this );
+        
+        $( '#name_error' ).html( "" );
+        $( '#order_error' ).html( "" );
+        $( '#ml_id_error' ).html( "");
+        $( '#ign_error' ).html("");
+        $( '#ref_error' ).html("");
+        $( '#payment_method_error' ).html( "");
+
+        e.preventDefault();
+
+        $.ajax({
+            url: "/reseller",
+            dataType: "json",
+            type: "POST",
+            data: $form.serialize(),
+            success: function(data){
+                if(data.error){
+                    if(data.error.name){
+                        $( '#name_error' ).html( data.error.name[0] );
+                    }
+                    if(data.error.order){
+                        $( '#order_error' ).html( data.error.order[0] );
+                    }
+                    if(data.error.ml_id){
+                        $( '#ml_id_error' ).html( data.error.ml_id[0] );
+                    }
+                    if(data.error.ign){
+                        $( '#ign_error' ).html( data.error.ign[0] );
+                    }
+                    if(data.error.ref){
+                        $( '#ref_error' ).html( data.error.ref[0] );
+                    }
+                    if(data.error.payment_method){
+                        $( '#payment_method_error' ).html( data.error.payment_method[0] );
+                    }
+
+                }
+                if(data.success){
+                    $('#mediumModal').modal('hide');
+                    Swal.fire(
+                        'Good job!',
+                        'Order Request Successfuly Added',
+                        'success'
+                    ).then(function() {
+                        window.location = window.location.pathname;
+                    });
+                }
+            },
+        }); 
+    });
+});
+   
 </script>
 @endsection

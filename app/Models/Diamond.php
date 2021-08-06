@@ -8,20 +8,25 @@ class Diamond extends Model
 {
     protected $fillable = [
         'date',
-        'requested_by',
+        'request_by',
+        'request_id',
         'name',
-        'order_value',
-        'diamonds_value',
-        'coins_value',
+        'user_id',
+        'order',
+        'diamonds',
+        'coins',
         'ml_id',
         'ign',
         'ref',
         'status',
         'payment_method',
-        'profit_value',
+        'profit',
     ];
 
-    public function search(){
-        return $this->Model;
+    public function profileImage(){
+        $imagePath = ($this->image)? $this->image : 'img/avatar.jpg';
+
+        return '/storage/' .$imagePath;
     }
+
 }

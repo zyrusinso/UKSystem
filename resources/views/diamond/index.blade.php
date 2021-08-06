@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
 @section('content')
-
+<link rel="stylesheet" href="admin-lte/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
 <section class="content">
       <div class="container-fluid">
         <div class="row">
@@ -17,7 +17,7 @@
                     <table id="example2" class="table table-bordered table-hover table-sm" >
                     <?php 
                         if(!Auth::user()->isAdmin()){
-                        echo "<col><col><col><col><col><col style='visibility:collapse;'><col><col><col><col><col><col style='visibility:collapse;'>";
+                        echo "<col><col><col><col><col><col style='visibility:collapse;'><col><col><col><col><col><col style='visibility:collapse;'><col>";
                         }
                     ?>
                     <thead>
@@ -34,47 +34,41 @@
                             <th>Status</th>
                             <th>Payment Method</th>
                             <th>Profit</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
-                    <form action="" method="post" id="tableForm"></form>
-                    <tbody>
-                    @foreach ($diamonds as $diamond)
-                        <tr data-toggle="modal" data-id="{{ $diamond->id }}" data-target="#orderModal">
-                        
+
+                    <tbody id="myTable">
+                    <?php foreach ($diamonds as $diamond){?>
+                    
+                        <tr style="<?php 
+                                // if($diamond->status == "Pending"){echo "background-color: #ff0000; color: white;";}
+                                // if($diamond->status == "Done"){echo "background-color: green; color: white;";}
+                                // if($diamond->status == "Cancel"){echo "background-color: black; color: white;";}
+                            ?>">
+                            
                             <td>{{ $diamond->date }}</td>
                             <td>{{ $diamond->request_by }}</td>
                             <td>{{ $diamond->name }}</td>
-                            <td>{{ $diamond->order_value }}</td>
-                            <td>{{ $diamond->diamonds_value }}</td>
-                            <td>{{ $diamond->coins_value }}</td>
+                            <td>{{ $diamond->order }}</td>
+                            <td>{{ $diamond->diamonds }}</td>
+                            <td>{{ $diamond->coins }}</td>
                             <td>{{ $diamond->ml_id }}</td>
                             <td>{{ $diamond->ign }}</td>
                             <td>{{ $diamond->ref }}</td>
-                            <td>{{ $diamond->status }}</td>
+                            <td style="
+                            <?php 
+                                if($diamond->status == 'Pending'){echo 'background-color: #ff0000; color: white;';}
+                                if($diamond->status == 'Done'){echo 'background-color: green; color: white;';}
+                                if($diamond->status == 'Cancel'){echo 'background-color: black; color: white;';}
+                            ?>">
+                                {{ $diamond->status }}</td>
                             <td>{{ $diamond->payment_method }}</td>
-                            <td>{{ $diamond->profit_value }}</td>
+                            <td>{{ $diamond->profit }}</td>
+                            <td style="background-color: white"><a href="/diamond/<?= $diamond->id?>" class="btn btn-primary ">Edit</a></td>
                         </tr>
-                        
-                        <div class="modal fade" id="orderModal" role="dialog" aria-labelledby="mediumModalLabel" aria-hidden="true">
-                            <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h1>Order Request</h1>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                            <span aria-hidden="true">&times;</span>
-                                        </button>
-                                    </div>
-                                    <div class="modal-body" id="mediumBody">
-                                        <div id="oderDetails"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
+                    <?php }?>
 
-                        @endforeach
-
-                    </form>
                     </tbody>
                     </table>
                     
@@ -91,43 +85,43 @@
                     <div class="modal-dialog" role="document">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h1>History</h1>
+                                <h1>Order Request</h1>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                 </button>
                             </div>
                             <div class="modal-body" id="mediumBody">
                             <div class="form-group">
-                                <form  action="{{ route('diamond.store') }}" method="post" id="orderForm"></form>
+                                <form  action="{{ route('diamond.store') }}" method="post" id="orderForm">
                                 @csrf
                                         <label for="exampleInputBorderWidth2">Name</label>
-                                        <input type="text" class="form-control form-control-border border-width-2" name="Name" id="Name"  placeholder="e.g: John Doe">
-                                        <span class="text-danger error-text Name_error"></span>
+                                        <input type="text" class="form-control form-control-border border-width-2" name="name" id="Name"  placeholder="e.g: John Doe">
+                                        <span class="text-danger error-text" id="name_error"></span>
                                     </div>
                                     <div class="form-group">
                                         <label for="exampleInputBorderWidth2">Order</label>
                                         <input type="text" class="form-control form-control-border border-width-2" name="order" id="order" placeholder="ex: 100">
-                                        <span class="text-danger error-text order_error"></span>
+                                        <span class="text-danger error-text" id="order_error"></span>
                                     </div>
                                     <div class="form-group">
                                         <label for="exampleInputBorderWidth2">ML ID</label>
                                         <input type="text" class="form-control form-control-border border-width-2" name="ml_id" id="ml_id" placeholder="ex: 123456789(1234)">
-                                        <span class="text-danger error-text ml_id_error"></span>
+                                        <span class="text-danger error-text " id="ml_id_error"></span>
                                     </div>
                                     <div class="form-group">
                                         <label for="exampleInputBorderWidth2">IGN</label>
                                         <input type="text" class="form-control form-control-border border-width-2" name="ign" id="ign" placeholder="e.g: jOhnD0e#123">
-                                        <span class="text-danger error-text ign_error"></span>
+                                        <span class="text-danger error-text " id="ign_error"></span>
                                     </div>
                                     <div class="form-group">
                                         <label for="exampleInputBorderWidth2">Reference</label>
                                         <input type="text" class="form-control form-control-border border-width-2" name="ref" id="ref" placeholder="ex: Filter Dupli">
-                                        <span class="text-danger error-text ref_error"></span>
+                                        <span class="text-danger error-text " id="ref_error"></span>
                                     </div>
                                     <div class="form-group">
                                         <label for="exampleInputBorderWidth2">Payment Method</label>
                                         <input type="text" class="form-control form-control-border border-width-2" name="payment_method" id="payment_method" placeholder="ex: Drop Down">
-                                        <span class="text-danger error-text payment_method_error"></span>
+                                        <span class="text-danger error-text " id="payment_method_error"></span>
                                     </div>
                                     <input type="submit" value="submit" id="addSubmitBTN" class="btn btn-lg btn-success py-0">
                                 </form>
@@ -136,33 +130,89 @@
                     </div>
                 </div>
                 
-                </div>
+            </div>
             <!-- /.card -->
         </div>
     </div>
 </section>
 
+<script src="/admin-lte/plugins/sweetalert2\sweetalert2.all.min.js"></script>
 
 <script>
+
 $(function(){
-    $('#addSubmitBTN').on('click', function(e) {
-        var formData = signupForm.serialize();
+    //DataTables
+    $('#example2').DataTable({
+      "paging": true,
+      "lengthChange": false,
+      "searching": false,
+      "ordering": false,
+      "info": true,
+      "autoWidth": true,
+      "responsive": false,
+    });
+    // 
+    // $('#dataInfo').on('click', function(){
+    //     // window.location.href = "/reseller";
+    //     var dataId = $(this).attr("data-id");
+        
+    // });
+    
+    //Order Request
+    $('#orderForm').on('submit', function(e) {
+        var $form = $( this );
+        
+        $( '#name_error' ).html( "" );
+        $( '#order_error' ).html( "" );
+        $( '#ml_id_error' ).html( "");
+        $( '#ign_error' ).html("");
+        $( '#ref_error' ).html("");
+        $( '#payment_method_error' ).html( "");
 
         e.preventDefault();
+
         $.ajax({
             url: "/diamond",
+            dataType: "json",
             type: "POST",
-            data: formData,
+            data: $form.serialize(),
             success: function(data){
-                alert(data.query.name);
-            }
+                if(data.error){
+                    if(data.error.name){
+                        $( '#name_error' ).html( data.error.name[0] );
+                    }
+                    if(data.error.order){
+                        $( '#order_error' ).html( data.error.order[0] );
+                    }
+                    if(data.error.ml_id){
+                        $( '#ml_id_error' ).html( data.error.ml_id[0] );
+                    }
+                    if(data.error.ign){
+                        $( '#ign_error' ).html( data.error.ign[0] );
+                    }
+                    if(data.error.ref){
+                        $( '#ref_error' ).html( data.error.ref[0] );
+                    }
+                    if(data.error.payment_method){
+                        $( '#payment_method_error' ).html( data.error.payment_method[0] );
+                    }
+
+                }
+                if(data.success){
+                    $('#mediumModal').modal('hide');
+                    Swal.fire(
+                        'Good job!',
+                        'Order Request Successfuly Added',
+                        'success'
+                    ).then(function() {
+                        window.location = "/diamond";
+                    });
+                    document.getElementById("contactUsForm").reset(); 
+                }
+            },
         }); 
-        
-    })
+    });
 });
-
-
- 
-    
+   
 </script>
 @endsection
