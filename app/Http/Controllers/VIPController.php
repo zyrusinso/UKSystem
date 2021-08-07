@@ -4,6 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\VIP;
 use Illuminate\Http\Request;
+use App\Models\History;
+use Auth;
+use Validator;
+use Response;
 
 class VIPController extends Controller
 {
@@ -23,69 +27,122 @@ class VIPController extends Controller
         return view('vip.index', compact('vips'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
-        //
+        $validate = Validator::make($request->all(), [
+            'name' => ['required', 'min:4', 'max:50'],
+            'order' => ['required', 'max:10'],
+            'ml_id' => ['required', 'min:10', 'max:20'],
+            'ign' => ['required', 'max:50'],
+            'ref' => ['required', 'min:4', 'max:50'],
+            'payment_method' => ['required', 'max:50']
+        ]);
+        
+        if(!$validate->passes()){
+            return response()->json(['error' => $validate->errors()]);
+        }else{
+
+            $data = [
+                'date' => date("m/d"),
+                'request_by' => Auth::user()->name,
+                'name' => $request->name,
+                'order' => $request->order,
+                'diamonds' => null,
+                'coins' => null,
+                'ml_id' => $request->ml_id,
+                'ign' => $request->ign,
+                'ref' => $request->ref,
+                'status' => 'Pending',
+                'payment_method' => $request->payment_method
+            ];
+            $vipMax = VIP::max('id');
+            $vipAdded = $vipMax+1;
+            $dataH = [
+                'date' => date("m/d"),
+                'request_by' => Auth::user()->name,
+                'request_id' => "70001".$vipAdded,
+                'name' => $request->name,
+                'order' => $request->order,
+                'diamonds' => null,
+                'coins' => null,
+                'ml_id' => $request->ml_id,
+                'ign' => $request->ign,
+                'ref' => $request->ref,
+                'status' => 'Pending',
+                'payment_method' => $request->payment_method
+            ];
+            // dd($data, $dataH);
+            Diamond::Create($data);
+            History::Create($dataH);
+
+            return response()->json(
+                [
+                    'success' => 1,
+                    'message' => 'Data inserted successfully'
+                ]
+            );
+        }
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\VIP  $vIP
-     * @return \Illuminate\Http\Response
-     */
-    public function show(VIP $vIP)
+
+    public function show($id)
     {
-        //
+        $vipData = VIP::findorFail($id);
+        
+        $vipHistories = History::where('request_id', '=', "70001".$id)->orderBy('created_at', 'DESC')->get();
+        return view('vip.show', compact('vipData', 'vipHistories'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\VIP  $vIP
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(VIP $vIP)
+    public function update(Request $request, $id)
     {
-        //
-    }
+        $vipData = VIP::findorFail($id);
+        $validate = Validator::make($request->all(), [
+            'name' => ['required', 'min:4', 'max:50'],
+            'order' => ['required', 'max:10'],
+            'ml_id' => ['required', 'min:10', 'max:20'],
+            'ign' => ['required', 'max:50'],
+            'ref' => ['required', 'min:4', 'max:50'],
+            'payment_method' => ['required', 'max:50']
+        ]);
+            
+        if(!$validate->passes()){
+            return response()->json(['error' => $validate->errors()]);
+        }else{
+            $data = [
+                'date' => date("m/d"),
+                'request_by' => Auth::user()->name,
+                'name' => $request->name,
+                'order' => $request->order,
+                'diamonds' => null,
+                'coins' => null,
+                'ml_id' => $request->ml_id,
+                'ign' => $request->ign,
+                'ref' => $request->ref,
+                'status' => $request->status,
+                'payment_method' => $request->payment_method
+            ];
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\VIP  $vIP
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, VIP $vIP)
-    {
-        //
-    }
+            $dataH = [
+                'date' => date("m/d"),
+                'request_id' => "70001".$id,
+                'request_by' => Auth::user()->name,
+                'name' => $request->name,
+                'order' => $request->order,
+                'diamonds' => null,
+                'coins' => null,
+                'ml_id' => $request->ml_id,
+                'ign' => $request->ign,
+                'ref' => $request->ref,
+                'status' => $request->status,
+                'payment_method' => $request->payment_method
+            ];
+            // dd($data, $dataH);
+            $vipData->update($data);
+            History::create($dataH);
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\VIP  $vIP
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(VIP $vIP)
-    {
-        //
+            return response()->json([
+                'success' => 'Successfuly Updated!'
+            ]);
+        }
     }
 }

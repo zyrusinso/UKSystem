@@ -4,6 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\PreDiamond;
 use Illuminate\Http\Request;
+use App\Models\History;
+use Auth;
+use Validator;
+use Response;
 
 class PreDiamondController extends Controller
 {
@@ -23,69 +27,122 @@ class PreDiamondController extends Controller
         return view('pre_diamond.index', compact('pre_diamonds'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
-        //
+        $validate = Validator::make($request->all(), [
+            'name' => ['required', 'min:4', 'max:50'],
+            'order' => ['required', 'max:10'],
+            'ml_id' => ['required', 'min:10', 'max:20'],
+            'ign' => ['required', 'max:50'],
+            'ref' => ['required', 'min:4', 'max:50'],
+            'payment_method' => ['required', 'max:50']
+        ]);
+        
+        if(!$validate->passes()){
+            return response()->json(['error' => $validate->errors()]);
+        }else{
+
+            $data = [
+                'date' => date("m/d"),
+                'request_by' => Auth::user()->name,
+                'name' => $request->name,
+                'order' => $request->order,
+                'diamonds' => null,
+                'coins' => null,
+                'ml_id' => $request->ml_id,
+                'ign' => $request->ign,
+                'ref' => $request->ref,
+                'status' => 'Pending',
+                'payment_method' => $request->payment_method
+            ];
+            $pre_diamondMax = PreDiamond::max('id');
+            $pre_diamondAdded = $pre_diamondMax+1;
+            $dataH = [
+                'date' => date("m/d"),
+                'request_by' => Auth::user()->name,
+                'request_id' => "80001".$pre_diamondAdded,
+                'name' => $request->name,
+                'order' => $request->order,
+                'diamonds' => null,
+                'coins' => null,
+                'ml_id' => $request->ml_id,
+                'ign' => $request->ign,
+                'ref' => $request->ref,
+                'status' => 'Pending',
+                'payment_method' => $request->payment_method
+            ];
+            // dd($data, $dataH);
+            PreDiamond::Create($data);
+            History::Create($dataH);
+
+            return response()->json(
+                [
+                    'success' => 1,
+                    'message' => 'Data inserted successfully'
+                ]
+            );
+        }
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\PreDiamond  $preDiamond
-     * @return \Illuminate\Http\Response
-     */
-    public function show(PreDiamond $preDiamond)
+
+    public function show($id)
     {
-        //
+        $pre_diamondData = PreDiamond::findorFail($id);
+        
+        $pre_diamondHistories = History::where('request_id', '=', "80001".$id)->orderBy('created_at', 'DESC')->get();
+        return view('pre_diamond.show', compact('pre_diamondData', 'pre_diamondHistories'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\PreDiamond  $preDiamond
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(PreDiamond $preDiamond)
+    public function update(Request $request, $id)
     {
-        //
-    }
+        $pre_diamondData = PreDiamond::findorFail($id);
+        $validate = Validator::make($request->all(), [
+            'name' => ['required', 'min:4', 'max:50'],
+            'order' => ['required', 'max:10'],
+            'ml_id' => ['required', 'min:10', 'max:20'],
+            'ign' => ['required', 'max:50'],
+            'ref' => ['required', 'min:4', 'max:50'],
+            'payment_method' => ['required', 'max:50']
+        ]);
+            
+        if(!$validate->passes()){
+            return response()->json(['error' => $validate->errors()]);
+        }else{
+            $data = [
+                'date' => date("m/d"),
+                'request_by' => Auth::user()->name,
+                'name' => $request->name,
+                'order' => $request->order,
+                'diamonds' => null,
+                'coins' => null,
+                'ml_id' => $request->ml_id,
+                'ign' => $request->ign,
+                'ref' => $request->ref,
+                'status' => $request->status,
+                'payment_method' => $request->payment_method
+            ];
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\PreDiamond  $preDiamond
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, PreDiamond $preDiamond)
-    {
-        //
-    }
+            $dataH = [
+                'date' => date("m/d"),
+                'request_id' => "80001".$id,
+                'request_by' => Auth::user()->name,
+                'name' => $request->name,
+                'order' => $request->order,
+                'diamonds' => null,
+                'coins' => null,
+                'ml_id' => $request->ml_id,
+                'ign' => $request->ign,
+                'ref' => $request->ref,
+                'status' => $request->status,
+                'payment_method' => $request->payment_method
+            ];
+            // dd($data, $dataH);
+            $pre_diamondData->update($data);
+            History::create($dataH);
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\PreDiamond  $preDiamond
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(PreDiamond $preDiamond)
-    {
-        //
+            return response()->json([
+                'success' => 'Successfuly Updated!'
+            ]);
+        }
     }
 }

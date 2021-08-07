@@ -73,16 +73,22 @@ Route::middleware('auth')->prefix('pre_order_diamond')->group(function() {
 Route::middleware('auth')->prefix('pre_order_starlight')->group(function() {
     Route::get('/', [App\Http\Controllers\StarlightController::class, 'index'])->name('starlight.index');
     Route::post('/', [App\Http\Controllers\StarlightController::class, 'store'])->name('starlight.store');
+    Route::get('/{id}', [App\Http\Controllers\StarlightController::class, 'show'])->name('starlight.show');
+    Route::patch('/{id}', [App\Http\Controllers\StarlightController::class, 'update'])->name('starlight.update');
 
 });
 Route::middleware('auth')->prefix('vip_diamonds')->group(function() {
     Route::get('/', [App\Http\Controllers\VIPController::class, 'index'])->name('vip.index');
     Route::post('/', [App\Http\Controllers\VIPController::class, 'store'])->name('vip.store');
+    Route::get('/{id}', [App\Http\Controllers\VIPController::class, 'show'])->name('vip.show');
+    Route::patch('/{id}', [App\Http\Controllers\VIPController::class, 'update'])->name('vip.update');
 
 });
 Route::middleware('auth')->prefix('premium_diamonds')->group(function() {
     Route::get('/', [App\Http\Controllers\PreDiamondController::class, 'index'])->name('pre_diamond.index');
     Route::post('/', [App\Http\Controllers\PreDiamondController::class, 'store'])->name('pre_diamond.store');
+    Route::get('/{id}', [App\Http\Controllers\PreDiamondController::class, 'show'])->name('pre_diamond.show');
+    Route::patch('/{id}', [App\Http\Controllers\PreDiamondController::class, 'update'])->name('pre_diamond.update');
 
 });
 
