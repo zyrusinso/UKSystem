@@ -5,10 +5,12 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Diamond;
+use App\Models\WebsiteSetting;
 use App\Models\History;
 use Auth;
 use Validator;
 use Response;
+use Carbon\Carbon;
 
 class DiamondController extends Controller
 {
@@ -30,7 +32,6 @@ class DiamondController extends Controller
     {
         $validate = Validator::make($request->all(), [
             'name' => ['required', 'min:4', 'max:50'],
-            'order' => ['required', 'max:10'],
             'ml_id' => ['required', 'min:10', 'max:20'],
             'ign' => ['required', 'max:50'],
             'ref' => ['required', 'min:4', 'max:50'],
@@ -40,34 +41,37 @@ class DiamondController extends Controller
         if(!$validate->passes()){
             return response()->json(['error' => $validate->errors()]);
         }else{
-
+            $webSett = WebsiteSetting::where('id', '=', $request->order)->first();
+            $capitalValue = (int) round($webSett->coins_value*$webSett->coins);
             $data = [
-                'date' => date("m/d"),
+                'date' => Carbon::now()->format('m/d'),
                 'request_by' => Auth::user()->name,
                 'name' => $request->name,
-                'order' => $request->order,
-                'diamonds' => null,
-                'coins' => null,
+                'order' => $webSett->price,
+                'diamonds' => $webSett->diamonds,
+                'coins' => $webSett->coins,
                 'ml_id' => $request->ml_id,
                 'ign' => $request->ign,
                 'ref' => $request->ref,
                 'status' => 'Pending',
-                'payment_method' => $request->payment_method
+                'payment_method' => $request->payment_method,
+                'profit' => $webSett->price-$capitalValue
             ];
             $diamondMax = Diamond::max('id');
             $dataH = [
-                'date' => date("m/d"),
+                'date' => Carbon::now()->format('m/d'),
                 'request_by' => Auth::user()->name,
                 'request_id' => $diamondMax+1,
                 'name' => $request->name,
-                'order' => $request->order,
-                'diamonds' => null,
-                'coins' => null,
+                'order' => $webSett->price,
+                'diamonds' => $webSett->diamonds,
+                'coins' => $webSett->coins,
                 'ml_id' => $request->ml_id,
                 'ign' => $request->ign,
                 'ref' => $request->ref,
                 'status' => 'Pending',
-                'payment_method' => $request->payment_method
+                'payment_method' => $request->payment_method,
+                'profit' => $webSett->price-$capitalValue
             ];
             Diamond::Create($data);
             History::Create($dataH);
@@ -92,7 +96,38 @@ class DiamondController extends Controller
 
     public function update(Request $request, $id)
     {
-        $diamondData = Diamond::findorFail($id);
+        switch($request->order) {
+            case "257":
+                $orderID = 1; 
+                break;
+            case "514":
+                $orderID = 2; 
+                break;
+            case "706":
+                $orderID = 3; 
+                break;
+            case "1412":
+                $orderID = 4; 
+                break;
+            case "2195":
+                $orderID = 5; 
+                break;
+            case "3688":
+                $orderID = 6; 
+                break;
+            case "5532":
+                $orderID = 7; 
+                break;
+            case "9288":
+                $orderID = 8; 
+                break;
+                    
+        }
+        
+        $webSett = WebsiteSetting::where('id', '=', $orderID)->first();
+        $capitalValue = (int) round($webSett->coins_value*$webSett->coins);
+
+        $diamondData = Diamond::findOrFail($id);
         $validate = Validator::make($request->all(), [
             'name' => ['required', 'min:4', 'max:50'],
             'order' => ['required', 'max:10'],
@@ -105,35 +140,40 @@ class DiamondController extends Controller
         if(!$validate->passes()){
             return response()->json(['error' => $validate->errors()]);
         }else{
-            $dataD = [
-                'date' => date("m/d"),
+            $data = [
+                'date' => Carbon::now()->format('m/d'),
                 'request_by' => Auth::user()->name,
                 'name' => $request->name,
-                'order' => $request->order,
-                'diamonds' => null,
-                'coins' => null,
+                'order' => $webSett->price,
+                'diamonds' => $webSett->diamonds,
+                'coins' => $webSett->coins,
                 'ml_id' => $request->ml_id,
                 'ign' => $request->ign,
                 'ref' => $request->ref,
                 'status' => $request->status,
-                'payment_method' => $request->payment_method
+                'payment_method' => $request->payment_method,
+                'profit' => $webSett->price-$capitalValue
+
             ];
-            $diamondData->update($dataD);
 
             $dataH = [
                 'date' => date("m/d"),
                 'request_id' => $id,
                 'request_by' => Auth::user()->name,
                 'name' => $request->name,
-                'order' => $request->order,
-                'diamonds' => null,
-                'coins' => null,
+                'order' => $webSett->price,
+                'diamonds' => $webSett->diamonds,
+                'coins' => $webSett->coins,
                 'ml_id' => $request->ml_id,
                 'ign' => $request->ign,
                 'ref' => $request->ref,
                 'status' => $request->status,
-                'payment_method' => $request->payment_method
+                'payment_method' => $request->payment_method,
+                'profit' => $webSett->price-$capitalValue
+
             ];
+            
+            $diamondData->update($data);
             History::create($dataH);
 
             return response()->json([

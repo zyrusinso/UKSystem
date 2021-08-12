@@ -28,6 +28,20 @@
       flex: 1;      
 
     }
+    @media screen and (max-width: 992px) {
+      .li-content { visibility: hidden; }
+    }
+    
+    /* Small devices (tablets, 768px and up) */
+    @media (min-width: 768px) { .home-search { width: 400px; }}
+
+    /* Medium devices (desktops, 992px and up) */
+    @media (min-width: 992px) { .home-search { width: 600px; } }
+
+    /* Large devices (large desktops, 1200px and up) */
+    @media (min-width: 1200px) { .home-search { width: 800px; } }
+    
+
 
   </style>
 </head>
@@ -43,55 +57,57 @@
               </li>
               <li class="nav-item">
                 <div>
-                      <form action="{{ Request::url() }}" method="GET">
-                      <div class="input-group" style="width: 255%;">
-                        <input id="myInput" class="form-control form-control-sidebar" type="search" placeholder="Search" aria-label="Search">
-                        <div class="input-group-append">
-                          <button class="btn btn-sidebar">
-                            <i class="fas fa-search fa-fw"></i>
-                          </button>
-                        </div>
+                    <div class="input-group home-search">
+                      <input id="myInput" class="form-control form-control-md" type="search" placeholder="Search" aria-label="Search">
+                      <div class="input-group-append">
+                        <button class="btn btn-sidebar">
+                          <i class="fas fa-search fa-fw"></i>
+                        </button>
                       </div>
-                    </form>
-                
+                    </div>
                 </div>
             </li>
           </ul>
-          <ul class="navbar-nav">
-              <div class="li-container" style="">
-                <div>
-                  <li class="nav-item d-none d-inline-block">
-                      <a href="{{ route('admin.home') }}" class="nav-link {{ Request::url() == route('admin.home') ? 'active' : '' }}">Home</a>
-                  </li>
+          <div class=" hidden-xs collapse navbar-collapse navbar-left">
+            <ul class="nav navbar-nav " id="removeOnCollapse">
+                <div class="li-container" style="">
+                  <div class="row">
+                    <div class="col-lg-2">
+                      <li class="nav-item d-none d-inline-block">
+                          <a href="{{ route('admin.home') }}" class="nav-link li-content {{ Request::url() == route('admin.home') ? 'active' : '' }}">Home</a>
+                      </li>
+                    </div>
+                    <div class="col-lg-2">
+                      <li class="nav-item d-none d-inline-block">
+                          <a href="#" class="nav-link li-content">Offers</a>
+                      </li>
+                    </div>
+                    <div class="col-lg-2">
+                      <li class="nav-item d-none d-inline-block">
+                          <a href="#" class="nav-link li-content">Updates</a>
+                      </li>
+                    </div>
+                    <div class="col-lg-2">
+                      <li class="nav-item d-none d-inline-block">
+                          <a href="#" class="nav-link li-content">Calendar</a>
+                      </li>
+                    </div>
+                    <div class="col-lg-2">
+                      <li class="nav-item d-none d-inline-block">
+                          <a href="#" class="nav-link li-content">Spiels</a>
+                      </li>
+                    </div>
+                    <div class="col-lg-2">
+                      <li class="nav-item d-none d-inline-block">
+                          <a href="#" class="nav-link li-content">Administration</a>
+                      </li>
+                    </div>
+                  </div>
+                  
+                  
                 </div>
-                <div>
-                  <li class="nav-item d-none d-inline-block">
-                      <a href="#" class="nav-link">Offers</a>
-                  </li>
-                </div>
-                <div>
-                  <li class="nav-item d-none d-inline-block">
-                      <a href="#" class="nav-link">Updates</a>
-                  </li>
-                </div>
-                <div>
-                  <li class="nav-item d-none d-inline-block">
-                      <a href="#" class="nav-link">Calendar</a>
-                  </li>
-                </div>
-                <div>
-                  <li class="nav-item d-none d-inline-block">
-                      <a href="#" class="nav-link">Spiels</a>
-                  </li>
-                </div>
-                <div>
-                  <li class="nav-item d-none d-inline-block">
-                      <a href="#" class="nav-link">Administration</a>
-                  </li>
-                </div>
-                
-              </div>
-          </ul>
+            </ul>
+          </div>
         </div>
 
         <hr>
@@ -99,9 +115,9 @@
         <div>
           <ul class="navbar-nav ml-auto dropdown user user-menu">
             
-              <li>
-                <div class="info" >
-                      <a data-toggle="dropdown" aria-expanded="true" class="d-block nav-link" style=" margin-right: -5px; " disable><span style="
+              
+              <li class="d-flex">
+              <a lass="d-block nav-link" disable style="
                       color: <?php 
                         if (Cache::has('user-is-online-' . auth()->user()->id)){
                           echo "green";
@@ -109,30 +125,25 @@
                           echo "red";
                         }
                       ?>; 
-                      font-size: 15px;">
-                      •{{ auth()->user()->name }}</span></a>
-                </div> 
-              </li>
-              <li>
-                  <div class="image">
-                        <a class="dropdown" data-toggle="dropdown" href="#"><img src="/img/avatar.jpg" class="img-circle elevation-2" alt="User Image" style="width: 40px;"></a>
-                        
-                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <a class="dropdown-item" href="#">Profile</a>
-                        <a class="dropdown-item" href="#">Messages</a>
-                        <a class="dropdown-item" href="#">Payslip</a>
-                        <a class="dropdown-item" href="#">Settings</a>
-                        <a class="dropdown-item" href="{{ route('logout') }}"
-                                       onclick="event.preventDefault();
-                                                     document.getElementById('logout-form').submit();">
-                                        {{ __('Logout') }}
-                          <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                              @csrf
-                          </form>
-                        </a>
-                        </div>
-                  </div>
-                    
+                      font-size: 15px; margin-top: 10px; margin-right: 5px;">
+                      {{ auth()->user()->name }}</a>
+                <a class="dropdown" data-toggle="dropdown" href="#"><img src="/img/avatar.jpg" class="img-circle elevation-2" alt="User Image" style="width: 40px;"></a>
+                
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <a class="dropdown-item" href="#">Profile</a>
+                <a class="dropdown-item" href="#">Messages</a>
+                <a class="dropdown-item" href="#">Payslip</a>
+                <a class="dropdown-item" href="#">Settings</a>
+                <a class="dropdown-item" href="{{ route('logout') }}"
+                                onclick="event.preventDefault();
+                                              document.getElementById('logout-form').submit();">
+                                {{ __('Logout') }}
+                  <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                      @csrf
+                  </form>
+                </a>
+                </div>
+            
               </li>
           </ul>
         </div>
@@ -246,7 +257,7 @@
             </li>
 
             <li class="nav-item">
-                  <a href="{{ route('calculator') }}" class="nav-link ">
+                  <a href="#" class="nav-link ">
                 
                     <i class="fas fa-calculator"></i>
                     <p>

@@ -27,7 +27,7 @@
                     <div class="col-4">
                         <div class="form-group">
                             <label for="exampleInputBorderWidth2">Order</label>
-                            <input type="text" class="form-control form-control-border border-width-2" name="order" id="order" value="{{ $resellerData->order }}" placeholder="ex: 100">
+                            <input type="text" class="form-control form-control-border border-width-2" name="order" id="order" value="{{ $resellerData->diamonds }}" placeholder="ex: 100" readonly="readonly">
                             <span class="text-danger error-text" id="order_error"></span>
                         </div>
                     </div>
@@ -124,8 +124,8 @@
                         <td>{{ $resellerHistory->created_at }}</td>
                         <td>{{ $resellerHistory->request_by }}</td>
                         <td>{{ $resellerHistory->name }}</td>
-                        <td>{{ $resellerHistory->order_value }}</td>
-                        <td>{{ $resellerHistory->diamonds_value }}</td>
+                        <td>{{ $resellerHistory->order }}</td>
+                        <td>{{ $resellerHistory->diamonds }}</td>
                         <td>{{ $resellerHistory->ml_id }}</td>
                         <td>{{ $resellerHistory->ign }}</td>
                         <td>{{ $resellerHistory->ref }}</td>

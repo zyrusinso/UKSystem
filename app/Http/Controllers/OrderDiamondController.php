@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\OrderDiamond;
 use Illuminate\Http\Request;
 use App\Models\History;
+use App\Models\WebsiteSetting;
+
 use Auth;
 use Validator;
 use Response;
@@ -30,6 +32,9 @@ class OrderDiamondController extends Controller
     
     public function store(Request $request)
     {
+        $webSett = WebsiteSetting::where('id', '=', $request->order)->first();
+        $capitalValue = (int) round($webSett->coins_value*$webSett->coins);
+
         $validate = Validator::make($request->all(), [
             'name' => ['required', 'min:4', 'max:50'],
             'order' => ['required', 'max:10'],
@@ -48,10 +53,9 @@ class OrderDiamondController extends Controller
                 'date' => date("m/d"),
                 'request_by' => Auth::user()->name,
                 'name' => $request->name,
-                'order' => $request->order,
-                'schedule' => $request->schedule,
-                'diamonds' => null,
-                'coins' => null,
+                'order' => $webSett->price,
+                'diamonds' => $webSett->diamonds,
+                'coins' => $webSett->coins,
                 'ml_id' => $request->ml_id,
                 'ign' => $request->ign,
                 'ref' => $request->ref,
@@ -65,10 +69,10 @@ class OrderDiamondController extends Controller
                 'request_by' => Auth::user()->name,
                 'request_id' => "50001".$orderDiamondAdded,
                 'name' => $request->name,
-                'order' => $request->order,
                 'schedule' => $request->schedule,
-                'diamonds' => null,
-                'coins' => null,
+                'order' => $webSett->price,
+                'diamonds' => $webSett->diamonds,
+                'coins' => $webSett->coins,
                 'ml_id' => $request->ml_id,
                 'ign' => $request->ign,
                 'ref' => $request->ref,
@@ -99,6 +103,36 @@ class OrderDiamondController extends Controller
 
     public function update(Request $request, $id)
     {
+        switch($request->order) {
+            case "257":
+                $orderID = 1; 
+                break;
+            case "514":
+                $orderID = 2; 
+                break;
+            case "706":
+                $orderID = 3; 
+                break;
+            case "1412":
+                $orderID = 4; 
+                break;
+            case "2195":
+                $orderID = 5; 
+                break;
+            case "3688":
+                $orderID = 6; 
+                break;
+            case "5532":
+                $orderID = 7; 
+                break;
+            case "9288":
+                $orderID = 8; 
+                break;
+        }
+        
+        $webSett = WebsiteSetting::where('id', '=', $orderID)->first();
+        $capitalValue = (int) round($webSett->coins_value*$webSett->coins);
+
         $orderDiamondData = OrderDiamond::findorFail($id);
         $validate = Validator::make($request->all(), [
             'name' => ['required', 'min:4', 'max:50'],
@@ -117,10 +151,9 @@ class OrderDiamondController extends Controller
                 'date' => date("m/d"),
                 'request_by' => Auth::user()->name,
                 'name' => $request->name,
-                'order' => $request->order,
-                'schedule' => $request->schedule,
-                'diamonds' => null,
-                'coins' => null,
+                'order' => $webSett->price,
+                'diamonds' => $webSett->diamonds,
+                'coins' => $webSett->coins,
                 'ml_id' => $request->ml_id,
                 'ign' => $request->ign,
                 'ref' => $request->ref,

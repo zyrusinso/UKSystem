@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Reseller;
 use Illuminate\Http\Request;
 use App\Models\History;
+use App\Models\WebsiteSetting;
 use Auth;
 use Validator;
 use Response;
@@ -29,6 +30,8 @@ class ResellerController extends Controller
     
     public function store(Request $request)
     {
+        $webSett = WebsiteSetting::where('id', '=', $request->order)->first();
+        $capitalValue = (int) round($webSett->coins_value*$webSett->coins);
 
         $validate = Validator::make($request->all(), [
             'name' => ['required', 'min:4', 'max:50'],
@@ -47,14 +50,16 @@ class ResellerController extends Controller
                 'date' => date("m/d"),
                 'request_by' => Auth::user()->name,
                 'name' => $request->name,
-                'order' => $request->order,
-                'diamonds' => null,
-                'coins' => null,
+                'order' => $webSett->price,
+                'diamonds' => $webSett->diamonds,
+                'coins' => $webSett->coins,
                 'ml_id' => $request->ml_id,
                 'ign' => $request->ign,
                 'ref' => $request->ref,
                 'status' => 'Pending',
-                'payment_method' => $request->payment_method
+                'payment_method' => $request->payment_method,
+                'profit' => $webSett->price-$capitalValue
+
             ];
             $sellerMax = Reseller::max('id');
             $sellerMaxAdded = $sellerMax+1;
@@ -63,15 +68,17 @@ class ResellerController extends Controller
                 'request_by' => Auth::user()->name,
                 'request_id' => "10001".$sellerMaxAdded,
                 'name' => $request->name,
-                'order' => $request->order,
-                'diamonds' => null,
-                'coins' => null,
+                'order' => $webSett->price,
+                'diamonds' => $webSett->diamonds,
+                'coins' => $webSett->coins,
                 'ml_id' => $request->ml_id,
                 'ign' => $request->ign,
                 'ref' => $request->ref,
                 'status' => 'Pending',
-                'payment_method' => $request->payment_method
+                'payment_method' => $request->payment_method,
+                'profit' => $webSett->price-$capitalValue
             ];
+
             Reseller::Create($data);
             History::Create($dataH);
 
@@ -97,6 +104,36 @@ class ResellerController extends Controller
     
     public function update(Request $request, $id)
     {
+        switch($request->order) {
+            case "257":
+                $orderID = 1; 
+                break;
+            case "514":
+                $orderID = 2; 
+                break;
+            case "706":
+                $orderID = 3; 
+                break;
+            case "1412":
+                $orderID = 4; 
+                break;
+            case "2195":
+                $orderID = 5; 
+                break;
+            case "3688":
+                $orderID = 6; 
+                break;
+            case "5532":
+                $orderID = 7; 
+                break;
+            case "9288":
+                $orderID = 8; 
+                break;
+        }
+        
+        $webSett = WebsiteSetting::where('id', '=', $orderID)->first();
+        $capitalValue = (int) round($webSett->coins_value*$webSett->coins);
+
         $resellerData = Reseller::findorFail($id);
         $validate = Validator::make($request->all(), [
             'name' => ['required', 'min:4', 'max:50'],
@@ -114,14 +151,15 @@ class ResellerController extends Controller
                 'date' => date("m/d"),
                 'request_by' => Auth::user()->name,
                 'name' => $request->name,
-                'order' => $request->order,
-                'diamonds' => null,
-                'coins' => null,
+                'order' => $webSett->price,
+                'diamonds' => $webSett->diamonds,
+                'coins' => $webSett->coins,
                 'ml_id' => $request->ml_id,
                 'ign' => $request->ign,
                 'ref' => $request->ref,
                 'status' => $request->status,
-                'payment_method' => $request->payment_method
+                'payment_method' => $request->payment_method,
+                'profit' => $webSett->price-$capitalValue
             ];
             $resellerData->update($data);
 
@@ -130,14 +168,15 @@ class ResellerController extends Controller
                 'request_id' => "10001".$id,
                 'request_by' => Auth::user()->name,
                 'name' => $request->name,
-                'order' => $request->order,
-                'diamonds' => null,
-                'coins' => null,
+                'order' => $webSett->price,
+                'diamonds' => $webSett->diamonds,
+                'coins' => $webSett->coins,
                 'ml_id' => $request->ml_id,
                 'ign' => $request->ign,
                 'ref' => $request->ref,
                 'status' => $request->status,
-                'payment_method' => $request->payment_method
+                'payment_method' => $request->payment_method,
+                'profit' => $webSett->price-$capitalValue
             ];
             
             History::create($dataH);

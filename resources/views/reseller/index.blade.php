@@ -14,10 +14,10 @@
                 <!-- /.card-header -->
                 
                 <div class="card-body">
-                    <table id="example2" class="table table-bordered table-hover table-sm" >
+                    <table id="example2" class="table  table-responsive table-bordered table-hover table-sm" >
                     <?php 
                         if(!Auth::user()->isAdmin()){
-                            echo "<col><col><col><col><col><col style='visibility:collapse;'><col><col><col><col><col><col style='visibility:collapse;'><col>";
+                        echo "<col><col><col><col><col><col style='visibility:collapse;'><col><col><col><col><col><col style='visibility:collapse;'><col>";
                         }
                     ?>
                     <thead>
@@ -40,6 +40,7 @@
 
                     <tbody id="myTable">
                     <?php foreach ($resellers as $reseller){?>
+                    
                         <tr>
                             <td>{{ $reseller->date }}</td>
                             <td>{{ $reseller->request_by }}</td>
@@ -65,7 +66,9 @@
 
                     </tbody>
                     </table>
+                    
                 </div>
+                <!-- /.card-body -->
                 <div><button class="btn btn-success " 
                 style="height: 36px; width: 130px; float: right; margin: 0 10px 10px 0"
                 data-toggle="modal" id="addForm" data-target="#mediumModal">
@@ -87,17 +90,28 @@
                                 <form  action="{{ route('reseller.store') }}" method="post" id="orderForm">
                                 @csrf
                                         <label for="exampleInputBorderWidth2">Name</label>
-                                        <input type="text" class="form-control form-control-border border-width-2" name="name" id="name"  placeholder="e.g: John Doe">
+                                        <input type="text" class="form-control form-control-border border-width-2" name="name" id="Name"  placeholder="e.g: John Doe">
                                         <span class="text-danger error-text" id="name_error"></span>
                                     </div>
-                                    <div class="form-group">
-                                        <label for="exampleInputBorderWidth2">Order</label>
-                                        <input type="text" class="form-control form-control-border border-width-2" name="order" id="order" placeholder="ex: 100">
-                                        <span class="text-danger error-text" id="order_error"></span>
+                                    <label for="exampleInputBorderWidth2" class="mb-4">Order</label>
+                                    <div class="btn-group ml-2 ">
+                                        <select class="btn btn-default dropdown-toggle" name="order" id="orderID">
+                                            <div class="dropdown-menu">
+                                                <option class="dropdown-item" value="1" onclick="changeLabel()">257</option>
+                                                <option class="dropdown-item" value="2" onclick="changeLabel()">514</option>
+                                                <option class="dropdown-item" value="3" onclick="changeLabel()">706</option>
+                                                <option class="dropdown-item" value="4" onclick="changeLabel()">1412</option>
+                                                <option class="dropdown-item" value="5" onclick="changeLabel()">2195</option>
+                                                <option class="dropdown-item" value="6" onclick="changeLabel()">3688</option>
+                                                <option class="dropdown-item" value="7" onclick="changeLabel()">5532</option>
+                                                <option class="dropdown-item" value="8" onclick="changeLabel()">9288</option>
+                                            </div>
+                                        </select>   
                                     </div>
+                                    <label id="lblEmp" class="ml-2">Price: </label>
                                     <div class="form-group">
                                         <label for="exampleInputBorderWidth2">ML ID</label>
-                                        <input type="text" class="form-control form-control-border border-width-2" name="ml_id" id="ml_id"  placeholder="ex: 123456789(1234)">
+                                        <input type="text" class="form-control form-control-border border-width-2" name="ml_id" id="ml_id" placeholder="ex: 123456789(1234)">
                                         <span class="text-danger error-text " id="ml_id_error"></span>
                                     </div>
                                     <div class="form-group">
@@ -107,7 +121,7 @@
                                     </div>
                                     <div class="form-group">
                                         <label for="exampleInputBorderWidth2">Reference</label>
-                                        <input type="text" class="form-control form-control-border border-width-2" name="ref" id="ref"  placeholder="ex: Filter Dupli">
+                                        <input type="text" class="form-control form-control-border border-width-2" name="ref" id="ref" placeholder="ex: Filter Dupli">
                                         <span class="text-danger error-text " id="ref_error"></span>
                                     </div>
                                     <div class="form-group">
@@ -131,22 +145,67 @@
 <script src="/admin-lte/plugins/sweetalert2\sweetalert2.all.min.js"></script>
 
 <script>
-
 $(function(){
     //DataTables
     $('#example2').DataTable({
       "paging": true,
       "lengthChange": false,
       "searching": false,
-      "ordering": false,
+      "ordering": true,
       "info": true,
       "autoWidth": true,
       "responsive": false,
     });
+
+    $('#lblEmp').html("Price: 205");
+
+    //on selecting
+    $('#orderID').on('change', function() {
+        let switchValue = $('#orderID option:selected').text();
+        switch(switchValue) {
+            case "257":
+                $('#lblEmp').html("Price: 205");
+                break;
+            case "514":
+                $('#lblEmp').html("Price: 395");
+                break;
+            case "706":
+                $('#lblEmp').html("Price: 515");
+                break;
+            case "1412":
+                $('#lblEmp').html("Price: 1055");
+                break;
+            case "2195":
+                $('#lblEmp').html("Price: 1585");
+                break;
+            case "3688":
+                $('#lblEmp').html("Price: 2625");
+                break;
+            case "5532":
+                $('#lblEmp').html("Price: 3875");
+                break;
+            case "9288":
+                $('#lblEmp').html("Price: 6325");
+                break;
+        }
+    });
+
+    $('#addForm').on('click', function() {
+        
+
+        $( '#name_error' ).html( "" );
+        $( '#order_error' ).html( "" );
+        $( '#ml_id_error' ).html( "");
+        $( '#ign_error' ).html("");
+        $( '#ref_error' ).html("");
+        $( '#payment_method_error' ).html( "");
+    })
+
     
     
     //Order Request
     $('#orderForm').on('submit', function(e) {
+
         var $form = $( this );
         
         $( '#name_error' ).html( "" );

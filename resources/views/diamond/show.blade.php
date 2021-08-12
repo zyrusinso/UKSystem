@@ -27,7 +27,7 @@
                     <div class="col-4">
                         <div class="form-group">
                             <label for="exampleInputBorderWidth2">Order</label>
-                            <input type="text" class="form-control form-control-border border-width-2" name="order" id="order" value="{{ $diamondData->order }}" placeholder="ex: 100">
+                                <input type="text" class="form-control form-control-border border-width-2" name="order" id="order" value="{{ $diamondData->diamonds }}" placeholder="ex: 100" readonly="readonly">
                             <span class="text-danger error-text" id="order_error"></span>
                         </div>
                     </div>
@@ -65,7 +65,7 @@
                     
                     </div>
                     <div class="col-4 ">
-                    <label for="exampleInputBorderWidth2">Status</label>
+                        <label for="exampleInputBorderWidth2">Status</label>
                         <div class="btn-group ml-2">
                             <select class="btn btn-default dropdown-toggle" name="status">
                                 <div class="dropdown-menu">
@@ -124,8 +124,8 @@
                         <td>{{ $diamondHistory->created_at }}</td>
                         <td>{{ $diamondHistory->request_by }}</td>
                         <td>{{ $diamondHistory->name }}</td>
-                        <td>{{ $diamondHistory->order_value }}</td>
-                        <td>{{ $diamondHistory->diamonds_value }}</td>
+                        <td>{{ $diamondHistory->order }}</td>
+                        <td>{{ $diamondHistory->diamonds }}</td>
                         <td>{{ $diamondHistory->ml_id }}</td>
                         <td>{{ $diamondHistory->ign }}</td>
                         <td>{{ $diamondHistory->ref }}</td>
@@ -156,12 +156,11 @@
 <script src="/admin-lte/plugins/sweetalert2\sweetalert2.all.min.js"></script>
 <script>
 $(function(){
-    
+
     
     
     $('#updateForm').on('submit', function(e) {
         var $form = $( this );
-        
         $( '#name_error' ).html( "" );
         $( '#order_error' ).html( "" );
         $( '#ml_id_error' ).html( "");
